@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="weather.css" />
+    <title>weather</title>
+</head>
+
+<body>
+    <div id="wimg"><img id="image" src="https://play-lh.googleusercontent.com/lPfhsMXmCAVrYe3Im-YEuldaIylbh0-ZMxUSf6sd-alEAphC2iGnsaEc3gJGC1LTE1g"></div>
+    <input type="text" id="city" placeholder="city name" >
+    <button id="bu" onclick="getcity()">Check By City</button><br>
+    <button id="but" onclick="livelocation()">Check by Live Location</button>
+    <div id="supreme">
+        <div id="container"></div>
+        <div id="box"><iframe 
+            width="600" 
+            height="400" 
+            id="gmap_canvas" 
+            frameborder="0"
+            scrolling="no"
+            marginheight="0" 
+            marginwidth="0"
+            ></iframe>
+        </div>
+         
+    </div>
+
+    
+    
+           
+            
+</body>
+</html>
+<script>
+   
+   let key="d71eb4223ec61e88591136c6ccc79e5c"
+ 
+  function livelocation(){
+   
+    getdata1()
+    function getdata1() {
+     navigator.geolocation.getCurrentPosition(success);
+    function success(position) {
+    const latitude = position.coords.latitude;
+     const longitude = position.coords.longitude;
+     getdata(latitude,longitude)
+     console.log(latitude);
+     console.log(longitude);
+   }
+  }
+}
+
+  async function getdata(latitude,longitude){
+       let url=`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`
+       try{
+            let res=await fetch(url)
+            let weather=await res.json()
+            console.log(weather)
+            append(weather)
+            
+        }catch(error){
+             console.log(error)
+        }
+    }
+     
+    function append(data){
+        let container=document.getElementById("container")
+         container.innerText=null
+            let img=document.createElement("img")
+            img.src="https://images.ctfassets.net/hrltx12pl8hq/1DauLWsEwcnLf4NpCUMxxZ/85290d98239ff0bbee9803932249c444/weather-shutterstock_1716559711.jpg?fit=fill&w=480&h=320"
+            let h1=document.createElement("h2")
+            h1.innerText=data.name
+            let h2=document.createElement("h3")
+            h2.innerText=data.sys.country
+            let h3=document.createElement("h4")
+            h3.innerText=`temp max ${data.main.temp_max} C`
+            let h=document.createElement("h4")
+            h.innerText=`temp min ${data.main.temp_min} C`
+            let h4=document.createElement("h4")
+            h4.innerText=`humidity ${data.main.humidity}`
+            let h5=document.createElement("h4")
+            h5.innerText=`pressure ${data.main.pressure}`
+            let h6=document.createElement("h4")
+            h6.innerText=`feels like ${data.main.feels_like} C`
+            
+            let div=document.createElement("div")
+            div.append(img,h1,h2,h,h3,h4,h5,h6)
+            container.append(div)
+      
+            let iframe=document.querySelector("#gmap_canvas")
+                iframe. src=`https://maps.google.com/maps?q=${data.name}&t=&z=13&ie=UTF8&iwloc=&output=embed`
+    }
+  
+ function getcity(){
+   getcitydata()
+  }
+
+   async function getcitydata(){
+       let city=document.querySelector("#city").value
+       let url=`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric`
+       try{
+            let res=await fetch(url)
+            let weather=await res.json()
+            console.log(weather)
+            append(weather)
+            
+        }catch(error){
+             console.log(error)
+        }
+    }
+
+
+</script>
+
+
